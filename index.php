@@ -1,138 +1,135 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-    <title>NASCON Management System</title>
-    <?php require 'utils/styles.php'; ?>
-    <?php require 'utils/scripts.php'; ?>
-</head>
-<body>
-<?php require 'utils/header.php'; ?>
+<?php
+require_once 'includes/header.php';
 
-<div class="content">
+// Get upcoming events
+$query = "SELECT e.*, c.name as category_name, 
+          (SELECT COUNT(*) FROM event_registrations WHERE event_id = e.id) as registration_count
+          FROM events e 
+          JOIN event_categories c ON e.category_id = c.id
+          WHERE e.is_published = 1 AND e.start_date > NOW()
+          ORDER BY e.start_date ASC LIMIT 6";
+$result = $conn->query($query);
+?>
+
+<div class="hero-section">
     <div class="container">
-        <div class="col-md-12">
-            <h1 class="text-center">Explore NASCON Events</h1>
+        <div class="row align-items-center">
+            <div class="col-md-6">
+                <h1>FAST University Event Management</h1>
+                <p class="lead">Discover, register, and participate in exciting events happening at FAST University.</p>
+                <div class="mt-4">
+                    <a href="events.php" class="btn btn-primary btn-lg">Browse Events</a>
+                    <?php if (!is_logged_in()): ?>
+                    <a href="register.php" class="btn btn-outline-dark btn-lg ms-2">Register Now</a>
+                    <?php endif; ?>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <img src="images/fast.jpg" alt="FAST Events" class="img-fluid rounded shadow">
+            </div>
         </div>
     </div>
-
-    <div class="container"><div class="col-md-12"><hr></div></div>
-
-    <!-- TECH COMPETITIONS -->
-    <div class="row">
-        <section>
-            <div class="container">
-                <div class="col-md-6">
-                    <img src="images/tech_competition.jpg" class="img-responsive" alt="Tech Competition">
-                </div>
-                <div class="subcontent col-md-6">
-                    <h1>Tech Competitions</h1>
-                    <p>
-                        Show off your coding, problem-solving, and innovation skills in our flagship tech events, including coding marathons, debugging duels, and robotics challenges.
-                    </p>
-                    <hr class="customline">
-                    <button type="button" class="btn btn-primary btn-lg">
-                        View Competitions <span class="glyphicon glyphicon-arrow-right"></span>
-                    </button>
-                </div>
-            </div>
-        </section>
-    </div>
-
-    <div class="container"><div class="col-md-12"><hr></div></div>
-
-    <!-- GAMING ARENA -->
-    <div class="row">
-        <section>
-            <div class="container">
-                <div class="col-md-6">
-                    <img src="images/gaming.jpg" class="img-responsive" alt="Gaming Arena">
-                </div>
-                <div class="subcontent col-md-6">
-                    <h1>Gaming Arena</h1>
-                    <p>
-                        Compete in intense eSports battles with fellow gamers in titles like Valorant, CS:GO, FIFA, and more. NASCON brings you adrenaline-packed tournaments with prizes!
-                    </p>
-                    <hr class="customline">
-                    <button type="button" class="btn btn-primary btn-lg">
-                        View Tournaments <span class="glyphicon glyphicon-arrow-right"></span>
-                    </button>
-                </div>
-            </div>
-        </section>
-    </div>
-
-    <div class="container"><div class="col-md-12"><hr></div></div>
-
-    <!-- WORKSHOPS -->
-    <div class="row">
-        <section>
-            <div class="container">
-                <div class="col-md-6">
-                    <img src="images/workshop.jpg" class="img-responsive" alt="Workshop">
-                </div>
-                <div class="subcontent col-md-6">
-                    <h1>Workshops</h1>
-                    <p>
-                        Learn from industry professionals and mentors in hands-on workshops covering AI, Web Development, Blockchain, and more. Perfect for curious minds.
-                    </p>
-                    <hr class="customline">
-                    <button type="button" class="btn btn-primary btn-lg">
-                        View Workshops <span class="glyphicon glyphicon-arrow-right"></span>
-                    </button>
-                </div>
-            </div>
-        </section>
-    </div>
-
-    <div class="container"><div class="col-md-12"><hr></div></div>
-
-    <!-- HACKATHONS -->
-    <div class="row">
-        <section>
-            <div class="container">
-                <div class="col-md-6">
-                    <img src="images/hackathon.jpg" class="img-responsive" alt="Hackathon">
-                </div>
-                <div class="subcontent col-md-6">
-                    <h1>Hackathons</h1>
-                    <p>
-                        Team up and build something impactful within 24 hours. Whether you're a beginner or a veteran coder, hackathons are a chance to collaborate and innovate.
-                    </p>
-                    <hr class="customline">
-                    <button type="button" class="btn btn-primary btn-lg">
-                        View Hackathons <span class="glyphicon glyphicon-arrow-right"></span>
-                    </button>
-                </div>
-            </div>
-        </section>
-    </div>
-
-    <div class="container"><div class="col-md-12"><hr></div></div>
-
-    <!-- GUEST SPEAKERS -->
-    <div class="row">
-        <section>
-            <div class="container">
-                <div class="col-md-6">
-                    <img src="images/guest_speaker.jpg" class="img-responsive" alt="Guest Speaker">
-                </div>
-                <div class="subcontent col-md-6">
-                    <h1>Guest Speaker Sessions</h1>
-                    <p>
-                        Get inspired by industry leaders, startup founders, and tech influencers who share their journeys, insights, and advice to motivate the next generation.
-                    </p>
-                    <hr class="customline">
-                    <button type="button" class="btn btn-primary btn-lg">
-                        View Sessions <span class="glyphicon glyphicon-arrow-right"></span>
-                    </button>
-                </div>
-            </div>
-        </section>
-    </div>
-
 </div>
 
-<?php require 'utils/footer.php'; ?>
-</body>
-</html>
+<div class="container">
+    <section class="mb-5">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h2>Upcoming Events</h2>
+            <a href="events.php" class="btn btn-outline-primary">View All</a>
+        </div>
+        
+        <div class="row">
+            <?php if ($result->num_rows > 0): ?>
+                <?php while($event = $result->fetch_assoc()): ?>
+                    <div class="col-md-4 mb-4">
+                        <div class="card h-100">
+                            <div class="card-header bg-light text-center">
+                                <span class="badge bg-primary"><?php echo htmlspecialchars($event['category_name']); ?></span>
+                            </div>
+                            <div class="card-body">
+                                <h5 class="card-title"><?php echo htmlspecialchars($event['title']); ?></h5>
+                                <p class="card-text"><?php echo substr(htmlspecialchars($event['description']), 0, 100) . '...'; ?></p>
+                                <div class="d-flex justify-content-between">
+                                    <div>
+                                        <i class="fas fa-calendar-alt"></i> 
+                                        <?php echo date('M d, Y', strtotime($event['start_date'])); ?>
+                                    </div>
+                                    <div>
+                                        <i class="fas fa-map-marker-alt"></i> 
+                                        <?php echo htmlspecialchars($event['location']); ?>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="card-footer d-flex justify-content-between align-items-center">
+                                <small class="text-muted">
+                                    <i class="fas fa-users"></i> <?php echo $event['registration_count']; ?> registered
+                                </small>
+                                <a href="event_details.php?id=<?php echo $event['id']; ?>" class="btn btn-sm btn-primary">View Details</a>
+                            </div>
+                        </div>
+                    </div>
+                <?php endwhile; ?>
+            <?php else: ?>
+                <div class="col-12">
+                    <div class="alert alert-info">
+                        No upcoming events at the moment. Check back later!
+                    </div>
+                </div>
+            <?php endif; ?>
+        </div>
+    </section>
+
+    <section class="mb-5">
+        <h2 class="mb-4">Event Categories</h2>
+        <div class="row">
+            <?php
+            $categories_query = "SELECT id, name, description FROM event_categories";
+            $categories_result = $conn->query($categories_query);
+            while($category = $categories_result->fetch_assoc()):
+            ?>
+            <div class="col-md-4 mb-4">
+                <div class="card h-100">
+                    <div class="card-body">
+                        <h5 class="card-title"><?php echo htmlspecialchars($category['name']); ?></h5>
+                        <p class="card-text">
+                            <?php echo htmlspecialchars($category['description']); ?>
+                        </p>
+                    </div>
+                    <div class="card-footer">
+                        <a href="events.php?category=<?php echo $category['id']; ?>" class="btn btn-sm btn-outline-primary">View Events</a>
+                    </div>
+                </div>
+            </div>
+            <?php endwhile; ?>
+        </div>
+    </section>
+
+    <section>
+        <div class="row">
+            <div class="col-md-6">
+                <div class="card mb-4">
+                    <div class="card-body">
+                        <h4 class="card-title"><i class="fas fa-user-plus"></i> Registration is Easy</h4>
+                        <p class="card-text">Create an account and start registering for events. Get certificates for attended events.</p>
+                        <?php if (!is_logged_in()): ?>
+                        <a href="register.php" class="btn btn-primary">Register Now</a>
+                        <?php endif; ?>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="card mb-4">
+                    <div class="card-body">
+                        <h4 class="card-title"><i class="fas fa-calendar-check"></i> Organize Events</h4>
+                        <p class="card-text">Organizers can create and manage events through our platform.</p>
+                        <?php if (!is_logged_in()): ?>
+                        <a href="login.php" class="btn btn-primary">Login to Organize</a>
+                        <?php endif; ?>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>
+
+<?php require_once 'includes/footer.php'; ?> 
